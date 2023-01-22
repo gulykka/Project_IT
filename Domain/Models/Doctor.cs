@@ -1,4 +1,4 @@
-﻿namespace do_main;
+﻿namespace Domain;
 
 public class Doctor
 {
