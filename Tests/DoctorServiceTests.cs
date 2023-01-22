@@ -1,7 +1,7 @@
 ﻿using Domain.Models;
 using Moq;
 
-namespace UnitTests; 
+namespace Tests; 
 
 public class DoctorServiceTests {
 	private readonly DoctorService _doctorService;

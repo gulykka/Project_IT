@@ -1,4 +1,4 @@
-﻿namespace UnitTests; 
+﻿namespace Tests; 
 using Domain.Models;
 using Moq;
 public class ScheduleServiceTests {
