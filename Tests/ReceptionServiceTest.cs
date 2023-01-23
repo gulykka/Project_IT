@@ -5,11 +5,11 @@ namespace Tests;
 public class ReceptionServiceTests {
     private readonly ReceptionService _receptionService;
     private readonly Mock<IDoctorRepository> _doctorRepository;
-    private readonly Mock<IAppointmentRepository> _repository;
+    private readonly Mock<IReceptionRepository> _repository;
 
 
     public ReceptionServiceTests() {
-        _repository = new Mock<IAppointmentRepository>();
+        _repository = new Mock<IReceptionRepository>();
         _doctorRepository = new Mock<IDoctorRepository>();
         _receptionService = new ReceptionService(_repository.Object, _doctorRepository.Object);
     }
