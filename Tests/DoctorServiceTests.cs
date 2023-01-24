@@ -108,9 +108,11 @@ public class DoctorServiceTests {
 		Assert.True(response.Result.Success);
 	}
 	[Fact]
+	
 	public void GetBySpecOk() {
 		var response = _doctorService.GetBySpec(new Profile(1, "ЛОР"));
 		Assert.True(response.Result.Success);
+		
 	}
 	
 }

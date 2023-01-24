@@ -48,7 +48,6 @@ public class ScheduleController: ControllerBase {
             scheduleView.StartTime,
             scheduleView.EndTime
         );
-
         var res = await _service.Add(schedule);
         
         if(!res.Success)

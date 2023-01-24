@@ -60,7 +60,6 @@ public class ReceptionController: ControllerBase {
             return Problem(statusCode: 404, detail: res.Error);
 
         return Ok(res.Value);
-
     }
     
     [HttpGet("get_free_by_doctor")]

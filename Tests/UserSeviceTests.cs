@@ -15,7 +15,6 @@ public class UserServiceTests {
         return new User(username, "123", 1, "+791452352", "ооо", Role.Patient);
     }
     
-    
     [Fact]
     public void LoginIsEmptyOrNull() {
         var response = _userService.GetByLogin(string.Empty);

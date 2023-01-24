@@ -31,6 +31,7 @@ public class UserRepository : IUserRepository {
         return await _context.Users.AnyAsync(user => user.Id == id);
     }
 
+    
     public async Task<bool> Delete(int id) {
         var user = await _context.Users.FirstOrDefaultAsync(user => user.Id == id);
         if (user == default)

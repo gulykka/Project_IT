@@ -72,6 +72,7 @@ public class ReceptionRepository: IReceptionRepository {
             .Select(a => a.ToDomain())
             .ToListAsync();
     }
+    
 
     public async Task<bool> CheckFreeBySpec(DateTime time, Profile specialization) {
         var doctors = _context.Doctors

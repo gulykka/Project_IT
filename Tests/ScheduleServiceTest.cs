@@ -21,7 +21,6 @@ public class ScheduleServiceTests {
     }
 
     [Fact]
-
     public void GetByDoctorNotExist() {
         _doctorRepository.Setup(repo => repo.Exists(It.Is<int>(id => id == 1)))
             .ReturnsAsync(false);

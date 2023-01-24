@@ -36,8 +36,7 @@ public class UserService {
         
         if (string.IsNullOrEmpty(password))
             return Result.Fail<bool>("Empty password");
-
-
+        
         return Result.Ok<bool>(await _repository.ExistLogin(login, password));
     }
 }

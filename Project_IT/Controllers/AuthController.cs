@@ -5,7 +5,6 @@ using System.Text;
 using Domain.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
-
 namespace Project_IT.Controllers; 
 
 [ApiController]

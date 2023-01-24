@@ -85,6 +85,7 @@ public class DoctorController: ControllerBase {
                 Name = doc.FullName,
                 Specialization = doc.Specialization
             };
+            
             doctors.Add(docView);
         }
 

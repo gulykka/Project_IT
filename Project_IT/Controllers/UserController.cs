@@ -9,6 +9,7 @@ namespace Project_IT.Controllers;
 
 [ApiController]
 [Route("user")]
+
 public class UserController: ControllerBase {
     private readonly UserService _service;
     public UserController(UserService service) {

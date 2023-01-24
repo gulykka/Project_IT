@@ -28,6 +28,7 @@ public class ScheduleService {
             return Result.Fail<Schedule>("Schedule already exists");
 		
         await _repository.Create(schedule);
+      
         return Result.Ok<Schedule>(schedule);
     }
 

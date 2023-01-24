@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 namespace DataBase.Repositories; 
 using Converters;
 using Domain.Models;
+
 public class DoctorRepository : IDoctorRepository {
 
     private readonly ApplicationContext _context;

@@ -68,6 +68,7 @@ public class ReceptionServiceTests {
     }
 
     [Fact]
+    
     public void AddToConcreteDateBySpecNoFreeTime() {
         _repository.Setup(repo => repo.CheckFreeBySpec(It.IsAny<DateTime>(), It.IsAny<Profile>()))
             .ReturnsAsync(false);
