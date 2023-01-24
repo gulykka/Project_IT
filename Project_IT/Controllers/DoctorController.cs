@@ -1,8 +1,9 @@
 ﻿using Domain;
+using Project_IT.View;
+using Domain.Models;
 using Domain.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Project_IT.View;
 
 namespace Project_IT.Controllers; 
 

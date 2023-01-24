@@ -1,4 +1,4 @@
-﻿
+﻿using BackendPractice.View;
 using Domain;
 using Domain.Models;
 using Domain.Services;
@@ -11,11 +11,11 @@ namespace Project_IT.Controllers;
 
 [ApiController]
 [Route("Reception")]
-public class AppointmentController: ControllerBase {
+public class ReceptionController: ControllerBase {
     private readonly ReceptionService _service;
     private readonly DoctorService _doctorService;
 
-    public AppointmentController(ReceptionService service, DoctorService doctorService) {
+    public ReceptionController(ReceptionService service, DoctorService doctorService) {
         _service = service;
         _doctorService = doctorService;
     }

@@ -1,40 +1,44 @@
-﻿namespace DataBase.Repositories;
-
+﻿using Domain.Models;
 using DataBase.Converters;
+using DataBase.Models;
 using Domain;
-using Domain.Models;
+using Microsoft.EntityFrameworkCore;
 
-public class ReceptionRepository: IReceptionRepository
-{
+namespace DataBase.Repositories; 
+
+public class ReceptionRepository: IReceptionRepository {
+
     private readonly ApplicationContext _context;
-    private IReceptionRepository _receptionRepositoryImplementation;
 
     public ReceptionRepository(ApplicationContext context) {
         _context = context;
     }
 
-    public Reception Create(Reception item) {
-        _context.Receptions.Add(item.ToModel());
+    public async Task<Reception> Create(Reception item) {
+        await _context.Receptions.AddAsync(item.ToModel());
+        await _context.SaveChangesAsync();
         return item;
     }
 
-    public Reception? Get(int id) {
-        return _context.Receptions.FirstOrDefault(a => a.Id == id).ToDomain();
+    public async Task<Reception> Get(int id) {
+        var appointments = await _context.Receptions.FirstOrDefaultAsync(a => a.Id == id);
+        return appointments.ToDomain();
     }
 
-    public bool Exists(int id) {
-        return _context.Receptions.Any(a => a.Id == id);
+    public async Task<bool> Exists(int id) {
+        return await _context.Receptions.AnyAsync(a => a.Id == id);
     }
     
-    public IEnumerable<Reception> List() {
-        return _context.Receptions.Select(receptiontModel => receptiontModel.ToDomain()).ToList();
+    public async Task<IEnumerable<Reception>> List() {
+        return await _context.Receptions.Select(appointmentModel => appointmentModel.ToDomain()).ToListAsync();
     }
 
-    public bool Delete(int id) {
-        var reception = _context.Receptions.FirstOrDefault(a => a.Id == id);
-        if (reception == default)
+    public async Task<bool> Delete(int id) {
+        var appointment = await _context.Receptions.FirstOrDefaultAsync(a => a.Id == id);
+        if (appointment == default)
             return false; // not deleted
-        _context.Receptions.Remove(reception);
+        _context.Receptions.Remove(appointment);
+        await _context.SaveChangesAsync();
         return true;
     }
 
@@ -48,46 +52,37 @@ public class ReceptionRepository: IReceptionRepository
         return true;
     }
 
-    public Reception Update(Reception entity) {
+    public async Task<Reception> Update(Reception entity) {
         _context.Receptions.Update(entity.ToModel());
+        await _context.SaveChangesAsync();
         return entity;
     }
 
-    public IEnumerable<Reception> GetAllBySpec(Profile spec) {
-        var doctors = _context.Doctors.Where(d => d.Profile.Id == spec.Id);
-        return _context.Receptions.Where(a => doctors.Any(d => a.DoctorId == d.Id))
+    public async Task<IEnumerable<Reception>> GetAllBySpec(Profile spec) {
+        return await _context.Receptions.
+            Where(a => _context.Doctors.
+                Where(d => d.Profile.Id == spec.Id).Any(d => a.DoctorId == d.Id))
             .Select(a => a.ToDomain())
-            .ToList();
+            .ToListAsync();
         
-        //return ExcludeAppointments(appointments);
     }
 
-    public IEnumerable<Reception> GetAllByDoctor(Doctor doctor) {
-        return _context.Receptions.Where(a => a.DoctorId == doctor.Id)
+    public async Task<IEnumerable<Reception>> GetAllByDoctor(Doctor doctor) {
+        return await _context.Receptions.Where(a => a.DoctorId == doctor.Id)
             .Select(a => a.ToDomain())
-            .ToList();
+            .ToListAsync();
     }
 
-    public IEnumerable<DateTime> GetFreeBySpec(Profile spec)
-    {
-        throw new NotImplementedException();
-    }
-
-    public IEnumerable<DateTime> GetFreeByDoctor(Doctor doctor)
-    {
-        throw new NotImplementedException();
-    }
-
-    public bool CheckFreeBySpec(DateTime time, Profile profile) {
+    public async Task<bool> CheckFreeBySpec(DateTime time, Profile specialization) {
         var doctors = _context.Doctors
-            .Where(d => d.Profile.Id == profile.Id);
+            .Where(d => d.Profile.Id == specialization.Id);
 
-        var receptions = _context.Receptions.Where(a => doctors.Any(d => d.Id == a.DoctorId));
-        return receptions.Any(a => time >= a.StartTime && time <= a.EndTime);
+        var appointments = _context.Receptions.Where(a => doctors.Any(d => d.Id == a.DoctorId));
+        return await appointments.AnyAsync(a => time >= a.StartTime && time <= a.EndTime);
     }
 
-    public bool CheckFreeByDoctor(DateTime time, Doctor doctor) {
-        return _context.Receptions.Any(a => time >= a.StartTime && time <= a.EndTime && a.DoctorId == doctor.Id);
+    public Task<bool> CheckFreeByDoctor(DateTime time, Doctor doctor) {
+        return _context.Receptions.AnyAsync(a => time >= a.StartTime && time <= a.EndTime && a.DoctorId == doctor.Id);
     }
 
     public Reception CreateBySpec(DateTime dateTime, Profile spec) {

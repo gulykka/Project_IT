@@ -1,9 +1,9 @@
 ﻿using Domain.Models;
 using Moq;
-namespace Tests;
+namespace UnitTests;
 
 public class ReceptionServiceTests {
-    private readonly ReceptionService _receptionService;
+    private readonly ReceptionService _appointmentService;
     private readonly Mock<IDoctorRepository> _doctorRepository;
     private readonly Mock<IReceptionRepository> _repository;
 
@@ -11,107 +11,107 @@ public class ReceptionServiceTests {
     public ReceptionServiceTests() {
         _repository = new Mock<IReceptionRepository>();
         _doctorRepository = new Mock<IDoctorRepository>();
-        _receptionService = new ReceptionService(_repository.Object, _doctorRepository.Object);
+        _appointmentService = new ReceptionService(_repository.Object, _doctorRepository.Object);
     }
 
     // Test entities ~~
-    public Doctor GetDoctor(string name = "Mart Lee") {
+    public Doctor GetDoctor(string name = "John Doe") {
         
-        return new Doctor(1, name, new Profile(1, "Лор"));
+        return new Doctor(1, name, new Profile(1, "ЛОР"));
     }
 
-    public Profile GetProfile() {
-        return new Profile(1, "Лор");
+    public Profile GetSpecialization() {
+        return new Profile(1, "ЛОР");
     }
 
-    public Reception GetReception() {
+    public Reception GetAppointment() {
         return new Reception(1, DateTime.Now, DateTime.Now, 1, 1);
     }
 
     [Fact]
     public void AddToConcreteDateByDoctorIsNotExists() {
         _doctorRepository.Setup(repo => repo.Exists(It.Is<int>(id => id == 1)))
-            .Returns(false);
+            .ReturnsAsync(false);
         _doctorRepository.Setup(repo => repo.Get(It.Is<int>(id => id == 1)))
-            .Returns(GetDoctor());
+            .ReturnsAsync(GetDoctor());
         
-        var response = _receptionService.AddToConcreteDate(GetReception());
+        var response = _appointmentService.AddToConcreteDate(GetAppointment());
         
-        Assert.False(response.Success);
-        Assert.Equal("Doctor doesn't exists", response.Error);
+        Assert.False(response.Result.Success);
+        Assert.Equal("Doctor doesn't exists", response.Result.Error);
     }
     [Fact]
     public void AddToConcreteDateByDoctorTimeTaken() {
         _doctorRepository.Setup(repo => repo.Exists(It.Is<int>(id => id == 1)))
-            .Returns(true);
+            .ReturnsAsync(true);
         _doctorRepository.Setup(repo => repo.Get(It.Is<int>(id => id == 1)))
-            .Returns(GetDoctor());
+            .ReturnsAsync(GetDoctor());
         _repository.Setup(repo => repo.CheckFreeByDoctor(It.IsAny<DateTime>(), It.Is<Doctor>(doctor => doctor.Id == 1)))
-            .Returns(false);
+            .ReturnsAsync(false);
 
-        var response = _receptionService.AddToConcreteDate(GetReception());
-        Assert.False(response.Success);
-        Assert.Equal("Date with this doctor already taken", response.Error);
+        var response = _appointmentService.AddToConcreteDate(GetAppointment());
+        Assert.False(response.Result.Success);
+        Assert.Equal("Date with this doctor already taken", response.Result.Error);
     }
     
     [Fact]
     public void AddToConcreteDateByDoctorOk() {
         _doctorRepository.Setup(repo => repo.Exists(It.Is<int>(id => id == 1)))
-            .Returns(true);
+            .ReturnsAsync(true);
         _doctorRepository.Setup(repo => repo.Get(It.Is<int>(id => id == 1)))
-            .Returns(GetDoctor());
+            .ReturnsAsync(GetDoctor());
         _repository.Setup(repo => repo.CheckFreeByDoctor(It.IsAny<DateTime>(), It.Is<Doctor>(doctor => doctor.Id == 1)))
-            .Returns(true);
-        var response = _receptionService.AddToConcreteDate(GetReception());
+            .ReturnsAsync(true);
+        var response = _appointmentService.AddToConcreteDate(GetAppointment());
         
-        Assert.True(response.Success);
+        Assert.True(response.Result.Success);
     }
 
     [Fact]
     public void AddToConcreteDateBySpecNoFreeTime() {
         _repository.Setup(repo => repo.CheckFreeBySpec(It.IsAny<DateTime>(), It.IsAny<Profile>()))
-            .Returns(false);
+            .ReturnsAsync(false);
 
-        var response = _receptionService.AddToConcreteDate(DateTime.Now, GetProfile());
+        var response = _appointmentService.AddToConcreteDate(DateTime.Now, GetSpecialization());
         
-        Assert.False(response.Success);
-        Assert.Equal("No free doctors for this spec/time", response.Error);
+        Assert.False(response.Result.Success);
+        Assert.Equal("No free doctors for this spec/time", response.Result.Error);
     }
 
     [Fact]
     public void AddToConcreteDateBySpecOk() {
         _repository.Setup(repo => repo.CheckFreeBySpec(It.IsAny<DateTime>(), It.IsAny<Profile>()))
-            .Returns(true);
+            .ReturnsAsync(true);
         
-        var response = _receptionService.AddToConcreteDate(DateTime.Now, GetProfile());
+        var response = _appointmentService.AddToConcreteDate(DateTime.Now, GetSpecialization());
         
-        Assert.True(response.Success);
+        Assert.True(response.Result.Success);
     }
 
     [Fact]
     public void GetFreeBySpecOk() {
-        var response = _receptionService.GetFreeBySpec(GetProfile());
-        Assert.True(response.Success);
+        var response = _appointmentService.GetFreeBySpec(GetSpecialization());
+        Assert.True(response.Result.Success);
     }
 
     [Fact]
     public void GetFreeByDoctorIsNotExists() {
         _doctorRepository.Setup(repo => repo.Exists(It.Is<int>(id => id == 1)))
-            .Returns(false);
+            .ReturnsAsync(false);
         
-        var response = _receptionService.GetFreeByDoctor(GetDoctor());
+        var response = _appointmentService.GetFreeByDoctor(GetDoctor());
         
-        Assert.False(response.Success);
-        Assert.Equal("Doctor doesn't exists", response.Error);
+        Assert.False(response.Result.Success);
+        Assert.Equal("Doctor doesn't exists", response.Result.Error);
     }
     
     [Fact]
     public void GetFreeByDoctorOk() {
         _doctorRepository.Setup(repo => repo.Exists(It.Is<int>(id => id == 1)))
-            .Returns(true);
+            .ReturnsAsync(true);
         
-        var response = _receptionService.GetFreeByDoctor(GetDoctor());
+        var response = _appointmentService.GetFreeByDoctor(GetDoctor());
         
-        Assert.True(response.Success);
+        Assert.True(response.Result.Success);
     }
 }
