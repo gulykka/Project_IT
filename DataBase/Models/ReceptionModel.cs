@@ -1,7 +1,8 @@
-﻿namespace do_main;
+﻿namespace DataBase.Models;
 
-public class Reception
+public class ReceptionModel
 {
+    public int Id;
     public DateTime StartTime { get; set; }
     public DateTime EndTime { get; set; }
     public int UserId { get; set; }
